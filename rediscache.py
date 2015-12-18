@@ -1,5 +1,6 @@
 """redis based cache which acts as always empty if redis is not available."""
 
+import asyncio
 import pickle
 import functools
 
