@@ -65,7 +65,15 @@ class RedisCache(StrictRedisCache):
             return False
 
 
-def cached(cache):
+def get_cache(*args, **kwargs):
+    if not kwargs and len(args) == 1 and isinstance(args[0], RedisCache):
+        return args[0]
+    else:
+        return RedisCache(*args, **kwargs)
+
+
+def cached(*args, **kwargs):
+    cache = get_cache(*args, **kwargs)
     def decorator(fn):
         @functools.wraps(fn)
         def wrapper(*args, **kwargs):
@@ -80,7 +88,8 @@ def cached(cache):
     return decorator
 
 
-def async_cached(cache):
+def async_cached(*args, **kwargs):
+    cache = get_cache(*args, **kwargs)
     def decorator(fn):
         @functools.wraps(fn)
         @asyncio.coroutine
