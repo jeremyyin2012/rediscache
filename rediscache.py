@@ -27,13 +27,6 @@ except ImportError as e:
 __version__ = '0.0.0'
 
 
-def hashkey(*args, **kwargs):
-    t = args
-    if kwargs:
-        t += sum(sorted(kwargs.items()), ())
-    return str(hash(t))
-
-
 class StrictRedisCache(object):
     def __init__(self, name, ttl=None, **kwargs):
         self.ttl = ttl
@@ -55,7 +48,7 @@ class StrictRedisCache(object):
         return key in self._redis
 
     def makekey(self, *args, **kwargs):
-        return self.name + ':' + hashkey(*args, **kwargs)
+        return self.name.encode('utf8') + b':' + pickle.dumps((args, kwargs))
 
 
 class RedisCache(StrictRedisCache):
