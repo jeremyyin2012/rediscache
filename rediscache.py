@@ -97,6 +97,7 @@ def cached(*args, **kwargs):
     If the first argument is a :py:class:`RedisCache`, that is used. Otherwise,
     a :py:class:`RedisCache` is construced with the passed arguments.
     """
+    cache = get_cache(*args, **kwargs)
     def decorator(fn):
         @functools.wraps(fn)
         def wrapper(*args, **kwargs):
