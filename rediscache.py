@@ -52,6 +52,25 @@ class StrictRedisCache(object):
 
 
 class RedisCache(StrictRedisCache):
+    def __init__(self, name, ttl=None, **kwargs):
+        """A dictionary-like redis based cache.
+
+        If redis is not available, this cache will act as if it was
+        always empty.
+
+        :type name: str
+        :param name: Namespace to avoid collision with other caches.
+
+        :type ttl: int
+        :param ttl: Number of seconds until the cached items expire.
+
+        Any other parameters will be forwarded to the unerlying
+        `redis connection
+        <https://redis-py.readthedocs.org/en/latest/#redis.StrictRedis>`_
+
+        """
+        super(RedisCache, self).__init__(name, ttl=ttl)
+
     def __setitem__(self, key, value):
         try:
             super(RedisCache, self).__setitem__(key, value)
@@ -73,7 +92,11 @@ def get_cache(*args, **kwargs):
 
 
 def cached(*args, **kwargs):
-    cache = get_cache(*args, **kwargs)
+    """Decorator that will cache the result of the wrapped function in redis.
+
+    If the first argument is a :py:class:`RedisCache`, that is used. Otherwise,
+    a :py:class:`RedisCache` is construced with the passed arguments.
+    """
     def decorator(fn):
         @functools.wraps(fn)
         def wrapper(*args, **kwargs):
@@ -89,6 +112,11 @@ def cached(*args, **kwargs):
 
 
 def async_cached(*args, **kwargs):
+    """Decorator that will cache the result of the wrapped coroutine in redis.
+
+    If the first argument is a :py:class:`RedisCache`, that is used. Otherwise,
+    a :py:class:`RedisCache` is construced with the passed arguments.
+    """
     cache = get_cache(*args, **kwargs)
     def decorator(fn):
         @functools.wraps(fn)
