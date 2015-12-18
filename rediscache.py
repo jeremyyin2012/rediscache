@@ -14,10 +14,10 @@ except ImportError as e:
         def get(self, key):
             raise ConnectionError
 
-        def set(self, key):
+        def set(self, key, value):
             raise ConnectionError
 
-        def setex(self, time, key):
+        def setex(self, key, time, value):
             raise ConnectionError
 
         def __contains__(self, key):
