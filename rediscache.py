@@ -84,3 +84,19 @@ def cached(cache):
                 return value
         return wrapper
     return decorator
+
+
+def async_cached(cache):
+    def decorator(fn):
+        @functools.wraps(fn)
+        @asyncio.coroutine
+        def wrapper(*args, **kwargs):
+            key = cache.makekey(*args, **kwargs)
+            if key in cache:
+                return cache[key]
+            else:
+                value = yield from fn(*args, **kwargs)
+                cache[key] = value
+                return value
+        return wrapper
+    return decorator
