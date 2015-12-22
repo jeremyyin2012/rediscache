@@ -24,7 +24,7 @@ except ImportError as e:
         def __contains__(self, key):
             raise ConnectionError
 
-__version__ = '0.0.0'
+__version__ = '0.0.1'
 
 
 class StrictRedisCache(object):
